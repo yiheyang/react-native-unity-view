@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@asmadsen/react-native-unity-view@file:..":
+"@yiheyang/react-native-unity-view@file:..":
   version "1.0.0"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":

@@ -74,7 +74,7 @@ def configureReactNativePom(def pom) {
         name packageJson.title
         artifactId packageJson.name
         version = packageJson.version
-        group = "no.asmadsen.unity.view"
+        group = "me.yiheyang.unity.view"
         description packageJson.description
         url packageJson.repository.baseUrl
 

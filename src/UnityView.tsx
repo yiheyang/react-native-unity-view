@@ -23,6 +23,14 @@ export interface UnityViewProps extends ViewProps {
 let NativeUnityView
 
 class UnityView extends Component<UnityViewProps> {
+    public static propTypes = {
+        ...ViewPropTypes,
+        onMessage: PropTypes.func
+    }
+
+    constructor(props) {
+        super(props);
+    }
 
     state = {
         handle: null

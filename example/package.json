@@ -12,7 +12,7 @@
   "dependencies": {
     "react": "16.8.1",
     "react-native": "0.61.3",
-    "@asmadsen/react-native-unity-view": "file:../"
+    "@yiheyang/react-native-unity-view": "file:../"
   },
   "devDependencies": {
     "@babel/core": "^7.5.0",

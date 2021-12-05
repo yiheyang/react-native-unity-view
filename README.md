@@ -2,18 +2,19 @@
 
 Integrate unity3d within a React Native app. Add a react native component to show unity. Works on both iOS and Android.
 
+__*This is a fork of [@asmadsen/react-native-unity-view](https://github.com/asmadsen/react-native-unity-view) to make it work with Unity 2020.3.x LTS and React Native >= 0.60, with type declaration corrected. The original package was created by [@f111fei](https://github.com/f111fei/react-native-unity-view). Many thanks for their contribution.*__
+
 __*If you're using a Unity version older than 2019.3 you can only export to android*__
 
 ## Notice
 
-This is a fork of [https://github.com/f111fei/react-native-unity-view](https://github.com/f111fei/react-native-unity-view)
-to make it work with React Native >= 0.60.
+**The package has been successfully tested on React Native 0.66, Unity 2020.3.x, iOS / Android.**
 
 **This project may or may not be updated depending on the further use of it at my workplace, however feel free to fork it** 
 
 ## Install
 
-`yarn add @asmadsen/react-native-unity-view`
+`yarn add @yiheyang/react-native-unity-view`
 
 ## Configuration
 

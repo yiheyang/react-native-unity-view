@@ -1,4 +1,4 @@
-package no.asmadsen.unity.view;
+package me.yiheyang.unity.view;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;

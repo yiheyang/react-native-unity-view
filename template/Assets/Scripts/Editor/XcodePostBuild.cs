@@ -26,12 +26,13 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
+using UnityEngine;
 
 public static class XcodePostBuild {
-    private const string TouchedMarker = "https://github.com/asmadsen/react-native-unity-view";
+    private const string TouchedMarker = "https://github.com/yiheyang/react-native-unity-view";
 
-    [PostProcessBuild]
-    public static void OnPostBuild(BuildTarget target, string pathToBuiltProject) {
+    [PostProcessBuildAttribute]
+    public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
         if (target != BuildTarget.iOS) {
             return;
         }
@@ -39,6 +40,8 @@ public static class XcodePostBuild {
         PatchUnityNativeCode(pathToBuiltProject);
 
         UpdateUnityProjectFiles(pathToBuiltProject);
+
+        Debug.Log("Xcode Post Build Script Successfully Applied.");
     }
 
     private static void UpdateUnityProjectFiles(string pathToBuiltProject) {
@@ -61,6 +64,8 @@ public static class XcodePostBuild {
     }
 
     private static void EditUnityFrameworkH(string path) {
+        BackupFile(path);
+
         var inScope = false;
 
         EditCodeFile(path, line => {
@@ -80,6 +85,8 @@ public static class XcodePostBuild {
     }
 
     private static void EditUnityAppControllerH(string path) {
+        BackupFile(path);
+
         var inScope = false;
         var markerDetected = false;
 
@@ -151,10 +158,9 @@ public static class XcodePostBuild {
             markerDetected = true;
 
             return new string[] {
-                "// }",
                 "",
                 "// Added by " + TouchedMarker,
-                "static inline UnityAppController* GetAppController()",
+                "static inline UnityAppController* GetAppController(void)",
                 "{",
                 "    return [UnityAppController GetAppController];",
                 "}",
@@ -164,6 +170,8 @@ public static class XcodePostBuild {
     }
 
     private static void EditUnityAppControllerMM(string path) {
+        BackupFile(path);
+        
         var inScope = false;
         var markerDetected = false;
 
@@ -195,9 +203,9 @@ public static class XcodePostBuild {
             }
 
             inScope |= line.Contains("- (void)startUnity:");
-            markerDetected |= inScope && line.Contains(TouchedMarker);
+            markerDetected = false;
 
-            if (!inScope || line.Trim() != "}") return new string[] {line};
+            if (!inScope || line.Trim() != "#endif") return new string[] {line};
             inScope = false;
 
             if (markerDetected) {
@@ -205,9 +213,9 @@ public static class XcodePostBuild {
             }
             else {
                 return new string[] {
+                    "#endif",
                     "    // Modified by " + TouchedMarker,
                     @"    [[NSNotificationCenter defaultCenter] postNotificationName: @""UnityReady"" object:self];",
-                    "}",
                 };
             }
 
@@ -226,6 +234,7 @@ public static class XcodePostBuild {
             markerDetected = true;
 
             return new string[] {
+                "// }",
                 "",
             };
 
@@ -251,6 +260,8 @@ public static class XcodePostBuild {
     }
 
     private static void EditUnityViewMM(string path) {
+        BackupFile(path);
+
         var inScope = false;
 
         // Add frameworkWarmup method
@@ -263,13 +274,13 @@ public static class XcodePostBuild {
 
             return new string[] {
                 "",
-                "// Added by " + TouchedMarker,
-                "        if (requestedW == 0) {",
-                "            requestedW = _surfaceSize.width;",
-                "        }",
-                "        if (requestedH == 0) {",
-                "            requestedH = _surfaceSize.height;",
-                "        }",
+                "    // Added by " + TouchedMarker,
+                "    if (requestedW == 0) {",
+                "        requestedW = _surfaceSize.width;",
+                "    }",
+                "    if (requestedH == 0) {",
+                "        requestedH = _surfaceSize.height;",
+                "    }",
                 ""
             };
 
@@ -277,14 +288,14 @@ public static class XcodePostBuild {
     }
 
     private static void EditCodeFile(string path, Func<string, IEnumerable<string>> lineHandler) {
-        var bakPath = path + ".bak";
-        if (File.Exists(bakPath)) {
-            File.Delete(bakPath);
+        var tempPath = path + ".temp";
+        if (File.Exists(tempPath)) {
+            File.Delete(tempPath);
         }
 
-        File.Move(path, bakPath);
+        File.Move(path, tempPath);
 
-        using (var reader = File.OpenText(bakPath))
+        using (var reader = File.OpenText(tempPath))
         using (var stream = File.Create(path))
         using (var writer = new StreamWriter(stream)) {
             string line;
@@ -295,6 +306,17 @@ public static class XcodePostBuild {
                 }
             }
         }
+
+        File.Delete(tempPath);
+    }
+
+    private static void BackupFile(string path) {
+        var bakPath = path + ".bak";
+        if (File.Exists(bakPath)) {
+            File.Delete(bakPath);
+        }
+
+        File.Copy(path, bakPath);
     }
 }
 

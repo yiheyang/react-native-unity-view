@@ -1,4 +1,4 @@
-package no.asmadsen.unity.view;
+package me.yiheyang.unity.view;
 
 import android.content.Context;
 import android.content.res.Configuration;
