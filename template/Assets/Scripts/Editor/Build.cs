@@ -64,6 +64,10 @@ public class Build : MonoBehaviour {
         build_text = build_text.Replace("enableSplit = true", "enable true");
         build_text = build_text.Replace("implementation fileTree(dir: 'libs', include: ['*.jar'])", "implementation ':unity-classes'");
         build_text = Regex.Replace(build_text, @"\n.*applicationId '.+'.*\n", "\n");
+
+        // Support for Unity 2020.3.x LTS
+        build_text = build_text.Replace(":unityLibrary", ":UnityExport");
+        
         File.WriteAllText(build_file, build_text);
 
         // Modify AndroidManifest.xml
